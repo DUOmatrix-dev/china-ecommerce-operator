@@ -1,0 +1,452 @@
+{
+  "entities": {
+    "StorefrontMetrics": {
+      "title": "StorefrontMetrics",
+      "description": "Operational KPIs and traffic breakdown for a specific Chinese e-commerce platform storefront.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "UID of the operator owning this storefront record.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "platform": {
+          "type": "string",
+          "description": "Target China e-commerce platform identifier.",
+          "enum": ["Taobao/Tmall", "Pinduoduo", "JD", "Douyin Shop"],
+          "minLength": 2,
+          "maxLength": 40
+        },
+        "brandName": {
+          "type": "string",
+          "description": "Flagship store or brand name.",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "monthlyGmv": {
+          "type": "number",
+          "description": "Monthly Gross Merchandise Value in RMB."
+        },
+        "orderVolume": {
+          "type": "number",
+          "description": "Monthly total paid orders."
+        },
+        "avgOrderValue": {
+          "type": "number",
+          "description": "Average Order Value (客单价) in RMB."
+        },
+        "conversionRate": {
+          "type": "number",
+          "description": "Store conversion rate percentage."
+        },
+        "storeRating": {
+          "type": "number",
+          "description": "Store DSR / Experience score out of 5.0."
+        },
+        "adSpend": {
+          "type": "number",
+          "description": "Monthly advertising spend in RMB."
+        },
+        "adRoi": {
+          "type": "number",
+          "description": "Advertising ROAS multiple."
+        },
+        "returnRate": {
+          "type": "number",
+          "description": "Order refund and return rate percentage."
+        },
+        "repeatPurchaseRate": {
+          "type": "number",
+          "description": "90-day customer repeat purchase rate percentage."
+        },
+        "liveCommerceGmvShare": {
+          "type": "number",
+          "description": "Percentage of total store GMV contributed by Live Commerce."
+        },
+        "organicSearchPct": {
+          "type": "number",
+          "description": "Traffic percentage from organic platform search."
+        },
+        "paidSearchPct": {
+          "type": "number",
+          "description": "Traffic percentage from paid search (Zhitongche / Doudou Search / JingSuTui)."
+        },
+        "recommendationFeedPct": {
+          "type": "number",
+          "description": "Traffic percentage from personalized recommendation feeds."
+        },
+        "liveCommercePct": {
+          "type": "number",
+          "description": "Traffic percentage from live streaming rooms."
+        },
+        "shortVideoPct": {
+          "type": "number",
+          "description": "Traffic percentage from short video and Xiaohongshu content seeding."
+        },
+        "privateDomainPct": {
+          "type": "number",
+          "description": "Traffic percentage from repeat customers and WeChat private domain CRM."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": [
+        "ownerId",
+        "platform",
+        "brandName",
+        "monthlyGmv",
+        "orderVolume",
+        "avgOrderValue",
+        "conversionRate",
+        "storeRating",
+        "adSpend",
+        "adRoi",
+        "returnRate",
+        "repeatPurchaseRate",
+        "liveCommerceGmvShare",
+        "organicSearchPct",
+        "paidSearchPct",
+        "recommendationFeedPct",
+        "liveCommercePct",
+        "shortVideoPct",
+        "privateDomainPct",
+        "updatedAt"
+      ]
+    },
+    "ProductListing": {
+      "title": "ProductListing",
+      "description": "Platform-specific product listing title formula, 5-slot main image strategy, and SKU margin waterfall.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "UID of the operator owning this SKU listing.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "skuCode": {
+          "type": "string",
+          "description": "Internal SKU identifier.",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "productName": {
+          "type": "string",
+          "description": "Core product name.",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "platform": {
+          "type": "string",
+          "description": "Target platform for algorithm optimization.",
+          "enum": ["Taobao/Tmall", "Pinduoduo", "JD", "Douyin Shop"],
+          "minLength": 2,
+          "maxLength": 40
+        },
+        "roleTag": {
+          "type": "string",
+          "description": "SKU role in store architecture (引流款 Traffic Driver, 利润款 Profit Item, 活动款 Promo Item).",
+          "enum": ["引流款 Traffic Driver", "利润款 Profit Item", "活动款 Promo Item"],
+          "minLength": 2,
+          "maxLength": 40
+        },
+        "brandKeyword": {
+          "type": "string",
+          "description": "Brand or specification anchor keyword.",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "coreKeyword": {
+          "type": "string",
+          "description": "High-volume core category search keyword.",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "attributeKeyword": {
+          "type": "string",
+          "description": "Material, spec, or price anchor keyword.",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "sellingPoint": {
+          "type": "string",
+          "description": "Core conversion benefit or value proposition.",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "scenarioKeyword": {
+          "type": "string",
+          "description": "Target audience, use scenario, or social proof hook.",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "optimizedTitle": {
+          "type": "string",
+          "description": "Assembled platform-compliant title string (max 60 chars).",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "retailPrice": {
+          "type": "number",
+          "description": "Selling price after coupons in RMB."
+        },
+        "cogs": {
+          "type": "number",
+          "description": "Manufacturing cost of goods sold in RMB."
+        },
+        "platformFeePct": {
+          "type": "number",
+          "description": "Platform commission and payment processing fee percentage."
+        },
+        "adCostPerUnit": {
+          "type": "number",
+          "description": "Customer acquisition advertising cost per unit sold in RMB."
+        },
+        "logisticsCost": {
+          "type": "number",
+          "description": "Fulfillment, packaging, and express shipping cost per unit in RMB."
+        },
+        "slot1Text": {
+          "type": "string",
+          "description": "Slot 1 Hero Shot visual brief.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "slot2Text": {
+          "type": "string",
+          "description": "Slot 2 Key Selling Point overlay text.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "slot3Text": {
+          "type": "string",
+          "description": "Slot 3 Usage Scenario direction.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "slot4Text": {
+          "type": "string",
+          "description": "Slot 4 Social Proof / Certifications callout.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "slot5Text": {
+          "type": "string",
+          "description": "Slot 5 Promotion / Urgency CTA.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "imageKey": {
+          "type": "string",
+          "description": "Asset key for preview studio.",
+          "enum": ["thermos", "skincare"],
+          "minLength": 2,
+          "maxLength": 20
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": [
+        "ownerId",
+        "skuCode",
+        "productName",
+        "platform",
+        "roleTag",
+        "brandKeyword",
+        "coreKeyword",
+        "attributeKeyword",
+        "sellingPoint",
+        "scenarioKeyword",
+        "optimizedTitle",
+        "retailPrice",
+        "cogs",
+        "platformFeePct",
+        "adCostPerUnit",
+        "logisticsCost",
+        "slot1Text",
+        "slot2Text",
+        "slot3Text",
+        "slot4Text",
+        "slot5Text",
+        "imageKey",
+        "updatedAt"
+      ]
+    },
+    "CampaignTask": {
+      "title": "CampaignTask",
+      "description": "618 and Double 11 festival campaign war-room milestone task.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "UID of the operator owning this campaign task.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "campaignName": {
+          "type": "string",
+          "description": "Festival campaign name (e.g., Double 11, 618 Mid-Year, CNY).",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "phase": {
+          "type": "string",
+          "description": "Countdown timeline phase.",
+          "enum": [
+            "T-60 Days: Strategic Planning",
+            "T-30 Days: Preparation Phase",
+            "T-7 Days: Warm-Up (蓄水期)",
+            "T-Day: Execution (爆发期)",
+            "T+1 to T+7: Post-Campaign"
+          ],
+          "minLength": 2,
+          "maxLength": 50
+        },
+        "title": {
+          "type": "string",
+          "description": "Actionable operational deliverable.",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "category": {
+          "type": "string",
+          "description": "Operational pillar (Merchandising, Traffic & Ads, Live Commerce, Inventory & CS, Retention).",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "completed": {
+          "type": "boolean",
+          "description": "Whether this battle-plan checklist item is completed."
+        },
+        "priority": {
+          "type": "string",
+          "description": "Execution criticality level.",
+          "enum": ["Critical", "High", "Standard"],
+          "minLength": 2,
+          "maxLength": 20
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": [
+        "ownerId",
+        "campaignName",
+        "phase",
+        "title",
+        "category",
+        "completed",
+        "priority",
+        "updatedAt"
+      ]
+    },
+    "AdCampaign": {
+      "title": "AdCampaign",
+      "description": "Platform-native advertising campaign or live commerce room performance tracker.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "UID of the operator owning this ad campaign.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "platform": {
+          "type": "string",
+          "description": "E-commerce platform.",
+          "enum": ["Taobao/Tmall", "Pinduoduo", "JD", "Douyin Shop"],
+          "minLength": 2,
+          "maxLength": 40
+        },
+        "toolName": {
+          "type": "string",
+          "description": "Platform ad tool or live commerce channel (e.g., 直通车 Zhitongche, 万相台 Wanxiangtai, 多多搜索, 京速推, 抖音千川).",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "campaignFocus": {
+          "type": "string",
+          "description": "Targeting and bidding strategy focus.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "dailyBudget": {
+          "type": "number",
+          "description": "Allocated daily budget in RMB."
+        },
+        "spend": {
+          "type": "number",
+          "description": "Cumulative 30-day ad spend in RMB."
+        },
+        "gmvGenerated": {
+          "type": "number",
+          "description": "Attributed 30-day GMV in RMB."
+        },
+        "ctr": {
+          "type": "number",
+          "description": "Click-through rate percentage."
+        },
+        "cvr": {
+          "type": "number",
+          "description": "Conversion rate percentage."
+        },
+        "status": {
+          "type": "string",
+          "description": "Current optimization status.",
+          "enum": ["Scaling", "Testing", "Paused"],
+          "minLength": 2,
+          "maxLength": 20
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": [
+        "ownerId",
+        "platform",
+        "toolName",
+        "campaignFocus",
+        "dailyBudget",
+        "spend",
+        "gmvGenerated",
+        "ctr",
+        "cvr",
+        "status",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/storefronts/{storefrontId}": {
+      "schema": { "$ref": "#/entities/StorefrontMetrics" },
+      "description": "Multi-platform storefront metrics owned by the authenticated operator."
+    },
+    "/listings/{listingId}": {
+      "schema": { "$ref": "#/entities/ProductListing" },
+      "description": "Platform-optimized SKU listings and unit economics owned by the authenticated operator."
+    },
+    "/campaigns/{campaignId}": {
+      "schema": { "$ref": "#/entities/CampaignTask" },
+      "description": "618 and Double 11 campaign battle plan checklist tasks owned by the authenticated operator."
+    },
+    "/ad_campaigns/{adCampaignId}": {
+      "schema": { "$ref": "#/entities/AdCampaign" },
+      "description": "Platform advertising and live commerce ROI campaigns owned by the authenticated operator."
+    }
+  }
+}

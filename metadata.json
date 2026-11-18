@@ -1,0 +1,6 @@
+{
+  "name": "China E-Commerce Operator",
+  "description": "Multi-platform China e-commerce operations command center for Taobao, Tmall, Pinduoduo, JD, and Douyin Shop covering listing optimization, 618/Double 11 battle plans, ad ROAS, live commerce, and SKU unit economics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

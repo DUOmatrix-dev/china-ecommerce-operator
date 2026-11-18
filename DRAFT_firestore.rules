@@ -1,0 +1,234 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net: Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Hardened Global Primitives
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidPlatform(platform) {
+      return platform is string && platform.size() >= 2 && platform.size() <= 40 &&
+        (platform == 'Taobao/Tmall' || platform == 'Pinduoduo' || platform == 'JD' || platform == 'Douyin Shop');
+    }
+
+    // 3. Entity Validation Blueprints (Anti-Update-Gap)
+    function isValidStorefrontMetrics(data) {
+      return data.keys().hasAll([
+        'ownerId', 'platform', 'brandName', 'monthlyGmv', 'orderVolume',
+        'avgOrderValue', 'conversionRate', 'storeRating', 'adSpend', 'adRoi',
+        'returnRate', 'repeatPurchaseRate', 'liveCommerceGmvShare',
+        'organicSearchPct', 'paidSearchPct', 'recommendationFeedPct',
+        'liveCommercePct', 'shortVideoPct', 'privateDomainPct', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId', 'platform', 'brandName', 'monthlyGmv', 'orderVolume',
+        'avgOrderValue', 'conversionRate', 'storeRating', 'adSpend', 'adRoi',
+        'returnRate', 'repeatPurchaseRate', 'liveCommerceGmvShare',
+        'organicSearchPct', 'paidSearchPct', 'recommendationFeedPct',
+        'liveCommercePct', 'shortVideoPct', 'privateDomainPct', 'updatedAt'
+      ]) &&
+      data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      isValidPlatform(data.platform) &&
+      data.brandName is string && data.brandName.size() >= 1 && data.brandName.size() <= 80 &&
+      data.monthlyGmv is number && data.monthlyGmv >= 0 &&
+      data.orderVolume is number && data.orderVolume >= 0 &&
+      data.avgOrderValue is number && data.avgOrderValue >= 0 &&
+      data.conversionRate is number && data.conversionRate >= 0 && data.conversionRate <= 100 &&
+      data.storeRating is number && data.storeRating >= 0 && data.storeRating <= 5 &&
+      data.adSpend is number && data.adSpend >= 0 &&
+      data.adRoi is number && data.adRoi >= 0 &&
+      data.returnRate is number && data.returnRate >= 0 && data.returnRate <= 100 &&
+      data.repeatPurchaseRate is number && data.repeatPurchaseRate >= 0 && data.repeatPurchaseRate <= 100 &&
+      data.liveCommerceGmvShare is number && data.liveCommerceGmvShare >= 0 && data.liveCommerceGmvShare <= 100 &&
+      data.organicSearchPct is number && data.organicSearchPct >= 0 && data.organicSearchPct <= 100 &&
+      data.paidSearchPct is number && data.paidSearchPct >= 0 && data.paidSearchPct <= 100 &&
+      data.recommendationFeedPct is number && data.recommendationFeedPct >= 0 && data.recommendationFeedPct <= 100 &&
+      data.liveCommercePct is number && data.liveCommercePct >= 0 && data.liveCommercePct <= 100 &&
+      data.shortVideoPct is number && data.shortVideoPct >= 0 && data.shortVideoPct <= 100 &&
+      data.privateDomainPct is number && data.privateDomainPct >= 0 && data.privateDomainPct <= 100 &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidProductListing(data) {
+      return data.keys().hasAll([
+        'ownerId', 'skuCode', 'productName', 'platform', 'roleTag',
+        'brandKeyword', 'coreKeyword', 'attributeKeyword', 'sellingPoint',
+        'scenarioKeyword', 'optimizedTitle', 'retailPrice', 'cogs',
+        'platformFeePct', 'adCostPerUnit', 'logisticsCost',
+        'slot1Text', 'slot2Text', 'slot3Text', 'slot4Text', 'slot5Text',
+        'imageKey', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId', 'skuCode', 'productName', 'platform', 'roleTag',
+        'brandKeyword', 'coreKeyword', 'attributeKeyword', 'sellingPoint',
+        'scenarioKeyword', 'optimizedTitle', 'retailPrice', 'cogs',
+        'platformFeePct', 'adCostPerUnit', 'logisticsCost',
+        'slot1Text', 'slot2Text', 'slot3Text', 'slot4Text', 'slot5Text',
+        'imageKey', 'updatedAt'
+      ]) &&
+      data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      data.skuCode is string && data.skuCode.size() >= 1 && data.skuCode.size() <= 40 &&
+      data.productName is string && data.productName.size() >= 1 && data.productName.size() <= 80 &&
+      isValidPlatform(data.platform) &&
+      data.roleTag is string && data.roleTag.size() >= 2 && data.roleTag.size() <= 40 &&
+      (data.roleTag == '引流款 Traffic Driver' || data.roleTag == '利润款 Profit Item' || data.roleTag == '活动款 Promo Item') &&
+      data.brandKeyword is string && data.brandKeyword.size() >= 1 && data.brandKeyword.size() <= 40 &&
+      data.coreKeyword is string && data.coreKeyword.size() >= 1 && data.coreKeyword.size() <= 40 &&
+      data.attributeKeyword is string && data.attributeKeyword.size() >= 1 && data.attributeKeyword.size() <= 40 &&
+      data.sellingPoint is string && data.sellingPoint.size() >= 1 && data.sellingPoint.size() <= 40 &&
+      data.scenarioKeyword is string && data.scenarioKeyword.size() >= 1 && data.scenarioKeyword.size() <= 40 &&
+      data.optimizedTitle is string && data.optimizedTitle.size() >= 1 && data.optimizedTitle.size() <= 120 &&
+      data.retailPrice is number && data.retailPrice >= 0 &&
+      data.cogs is number && data.cogs >= 0 &&
+      data.platformFeePct is number && data.platformFeePct >= 0 && data.platformFeePct <= 100 &&
+      data.adCostPerUnit is number && data.adCostPerUnit >= 0 &&
+      data.logisticsCost is number && data.logisticsCost >= 0 &&
+      data.slot1Text is string && data.slot1Text.size() >= 1 && data.slot1Text.size() <= 120 &&
+      data.slot2Text is string && data.slot2Text.size() >= 1 && data.slot2Text.size() <= 120 &&
+      data.slot3Text is string && data.slot3Text.size() >= 1 && data.slot3Text.size() <= 120 &&
+      data.slot4Text is string && data.slot4Text.size() >= 1 && data.slot4Text.size() <= 120 &&
+      data.slot5Text is string && data.slot5Text.size() >= 1 && data.slot5Text.size() <= 120 &&
+      data.imageKey is string && data.imageKey.size() >= 2 && data.imageKey.size() <= 20 &&
+      (data.imageKey == 'thermos' || data.imageKey == 'skincare') &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidCampaignTask(data) {
+      return data.keys().hasAll([
+        'ownerId', 'campaignName', 'phase', 'title', 'category',
+        'completed', 'priority', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId', 'campaignName', 'phase', 'title', 'category',
+        'completed', 'priority', 'updatedAt'
+      ]) &&
+      data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      data.campaignName is string && data.campaignName.size() >= 1 && data.campaignName.size() <= 60 &&
+      data.phase is string && data.phase.size() >= 2 && data.phase.size() <= 50 &&
+      (
+        data.phase == 'T-60 Days: Strategic Planning' ||
+        data.phase == 'T-30 Days: Preparation Phase' ||
+        data.phase == 'T-7 Days: Warm-Up (蓄水期)' ||
+        data.phase == 'T-Day: Execution (爆发期)' ||
+        data.phase == 'T+1 to T+7: Post-Campaign'
+      ) &&
+      data.title is string && data.title.size() >= 1 && data.title.size() <= 160 &&
+      data.category is string && data.category.size() >= 1 && data.category.size() <= 40 &&
+      data.completed is bool &&
+      data.priority is string && data.priority.size() >= 2 && data.priority.size() <= 20 &&
+      (data.priority == 'Critical' || data.priority == 'High' || data.priority == 'Standard') &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidAdCampaign(data) {
+      return data.keys().hasAll([
+        'ownerId', 'platform', 'toolName', 'campaignFocus',
+        'dailyBudget', 'spend', 'gmvGenerated', 'ctr', 'cvr', 'status', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId', 'platform', 'toolName', 'campaignFocus',
+        'dailyBudget', 'spend', 'gmvGenerated', 'ctr', 'cvr', 'status', 'updatedAt'
+      ]) &&
+      data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      isValidPlatform(data.platform) &&
+      data.toolName is string && data.toolName.size() >= 1 && data.toolName.size() <= 60 &&
+      data.campaignFocus is string && data.campaignFocus.size() >= 1 && data.campaignFocus.size() <= 120 &&
+      data.dailyBudget is number && data.dailyBudget >= 0 &&
+      data.spend is number && data.spend >= 0 &&
+      data.gmvGenerated is number && data.gmvGenerated >= 0 &&
+      data.ctr is number && data.ctr >= 0 && data.ctr <= 100 &&
+      data.cvr is number && data.cvr >= 0 && data.cvr <= 100 &&
+      data.status is string && data.status.size() >= 2 && data.status.size() <= 20 &&
+      (data.status == 'Scaling' || data.status == 'Testing' || data.status == 'Paused') &&
+      data.updatedAt == request.time;
+    }
+
+    // 4. Collection Match Blocks
+    match /storefronts/{storefrontId} {
+      allow get: if isSignedIn() && isValidId(storefrontId) && existing().ownerId == request.auth.uid;
+      allow list: if isSignedIn() && existing().ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(storefrontId) && isValidStorefrontMetrics(incoming());
+      allow update: if isSignedIn() && isValidId(storefrontId) && isValidStorefrontMetrics(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'platform', 'brandName', 'monthlyGmv', 'orderVolume', 'avgOrderValue',
+          'conversionRate', 'storeRating', 'adSpend', 'adRoi', 'returnRate',
+          'repeatPurchaseRate', 'liveCommerceGmvShare', 'organicSearchPct',
+          'paidSearchPct', 'recommendationFeedPct', 'liveCommercePct',
+          'shortVideoPct', 'privateDomainPct', 'updatedAt'
+        ]);
+      allow delete: if isSignedIn() && isValidId(storefrontId) && existing().ownerId == request.auth.uid;
+    }
+
+    match /listings/{listingId} {
+      allow get: if isSignedIn() && isValidId(listingId) && existing().ownerId == request.auth.uid;
+      allow list: if isSignedIn() && existing().ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(listingId) && isValidProductListing(incoming());
+      allow update: if isSignedIn() && isValidId(listingId) && isValidProductListing(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'skuCode', 'productName', 'platform', 'roleTag', 'brandKeyword',
+          'coreKeyword', 'attributeKeyword', 'sellingPoint', 'scenarioKeyword',
+          'optimizedTitle', 'retailPrice', 'cogs', 'platformFeePct',
+          'adCostPerUnit', 'logisticsCost', 'slot1Text', 'slot2Text',
+          'slot3Text', 'slot4Text', 'slot5Text', 'imageKey', 'updatedAt'
+        ]);
+      allow delete: if isSignedIn() && isValidId(listingId) && existing().ownerId == request.auth.uid;
+    }
+
+    match /campaigns/{campaignId} {
+      allow get: if isSignedIn() && isValidId(campaignId) && existing().ownerId == request.auth.uid;
+      allow list: if isSignedIn() && existing().ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(campaignId) && isValidCampaignTask(incoming());
+      allow update: if isSignedIn() && isValidId(campaignId) && isValidCampaignTask(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'campaignName', 'phase', 'title', 'category', 'completed', 'priority', 'updatedAt'
+        ]);
+      allow delete: if isSignedIn() && isValidId(campaignId) && existing().ownerId == request.auth.uid;
+    }
+
+    match /ad_campaigns/{adCampaignId} {
+      allow get: if isSignedIn() && isValidId(adCampaignId) && existing().ownerId == request.auth.uid;
+      allow list: if isSignedIn() && existing().ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(adCampaignId) && isValidAdCampaign(incoming());
+      allow update: if isSignedIn() && isValidId(adCampaignId) && isValidAdCampaign(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'platform', 'toolName', 'campaignFocus', 'dailyBudget', 'spend',
+          'gmvGenerated', 'ctr', 'cvr', 'status', 'updatedAt'
+        ]);
+      allow delete: if isSignedIn() && isValidId(adCampaignId) && existing().ownerId == request.auth.uid;
+    }
+  }
+}
